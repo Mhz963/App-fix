@@ -42,6 +42,15 @@ const CheckOutScreen = props => {
   const [value, onChangeText] = useState('');
   const [totalAmount, setTotalAmount] = useState(0);
 
+  //input user data
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [postCode, setPostCode] = useState('');
+  const [contact, setContact] = useState('');
+
+
   const dispatch = useDispatch();
   let PriceSymbol = '£';
 
@@ -67,14 +76,6 @@ const CheckOutScreen = props => {
   const profileUpdate = () => {
     navigation.navigate(RouteName.CHECK_OUT);
   };
-
-  //input user data
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [postCode, setPostCode] = useState('');
-  const [contact, setContact] = useState('');
 
 
   const handleContactChange = text => {
@@ -140,6 +141,7 @@ const CheckOutScreen = props => {
                     </View>
                   </View>
                 </View>
+
                 {/* <View style={CartTabStyles.bgcolorhomeaddresh}>
                   <View style={CartTabStyles.minflehomeandedit}>
                     <View style={CartTabStyles.flexhomeaddresh}>
@@ -173,7 +175,9 @@ const CheckOutScreen = props => {
                     </TouchableOpacity>
                   </View>
                 </View> */}
-                {/* <View style={{ marginVertical: 10 }} />
+
+                {/* My code to add username details: */}
+                <View style={{ marginVertical: 10 }} />
                 <View >
                   <Input
                     placeholder={'Enter Name:'}
@@ -212,8 +216,8 @@ const CheckOutScreen = props => {
                     value={contact}
                     keyboardType="numeric"
                   />
-                </View> */}
-                {/* <View style={{ marginVertical: 10 }} />
+                </View>
+                <View style={{ marginVertical: 10 }} />
                 <View style={CartTabStyles.containerStyle}>
                   <Input
                     placeholder={'Enter email:'}
@@ -236,7 +240,8 @@ const CheckOutScreen = props => {
                       CartTabStyles.inputInContainerStyle
                     ]}
                   />
-                </View> */}
+                </View>
+
 
 
                 <Spacing space={SH(20)} />
