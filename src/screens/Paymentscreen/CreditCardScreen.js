@@ -12,6 +12,8 @@ import axios from 'axios';
 import creatPaymentIntent from './stripeApi';
 import { useDispatch, useSelector } from 'react-redux';
 import { add_my_order } from '../../redux/action/cartAction';
+import { useRoute } from '@react-navigation/native';
+
 
 const CreditCardScreen = props => {
     const { myOrders, cartData } = useSelector(state => state.cartInfo)
@@ -22,6 +24,12 @@ const CreditCardScreen = props => {
     const { Colors } = useTheme();
     const [cardState, setCardState] = useState(null);
     const [totalAmount, setTotalAmount] = useState(0);
+
+    const route = useRoute();
+
+    //Extract user details from route params
+    const { name, email, address, city, postCode, contact } = route.params;
+
 
     useEffect(() => {
         let total = Number(0)
@@ -40,20 +48,21 @@ const CreditCardScreen = props => {
         }
     }
 
-    // const cardDone = async () => {
-    //     if(!!cardState) {
-    //         try {
-    //             const resToken = await createToken({...cardState, type: 'Card'})
-    //             console.log(resToken)
-    //         } catch (e) {
-    //             console.log(e);
-    //         }
-    //     }
-    // }
+    const cardDone = async () => {
+        if (!!cardState) {
+            try {
+                const resToken = await createToken({ ...cardState, type: 'Card' })
+                console.log(resToken)
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }
 
     const handlePayment = async () => {
+        console.log("run this handlepayment method ");
 
-        // const { firstName, lastName, email, postalCode, Billing_Address, Shipping_Address } = userData; // Assuming you have collected user data somewhere
+        const { firstName, lastName, email, postalCode, Billing_Address, Shipping_Address } = userData; // Assuming you have collected user data somewhere
 
         let apiData = {
             amount: 500,
@@ -67,20 +76,33 @@ const CreditCardScreen = props => {
             itemSKU.push(cart.SKU)
         })
 
-        const myOrderDetails = {
-            orderDate: new Date(),
-            items: itemName,
-            SKUs: itemSKU,
-            total: totalAmount,
-            // firstName,
-            // lastName,
-            // email,
-            // postalCode,
-            // Billing_Address,
-            // Shipping_Address
+        // const myOrderDetails = {
+        //     orderDate: new Date(),
+        //     items: itemName,
+        //     SKUs: itemSKU,
+        //     total: totalAmount,
+        //     name,
+        //     email,
+        //     address,
+        //     city,
+        //     postCode,
+        //     contact
+        // }
 
-
-        }
+        let myOrderDetails = {
+            "orderDate": new Date(),
+            "total": totalAmount,
+            "firstName": "myname",
+            "lastName": "mylastname",
+            "email": "myemail@gmail.com",
+            "postalCode": 302019,
+            "items": [
+                {
+                    "product_id": cartData[0].SKU,
+                    "quantity": 1
+                }
+            ]
+        };
 
         console.log('----', myOrderDetails)
 
@@ -94,9 +116,7 @@ const CreditCardScreen = props => {
                 let confirmPaymentIntent = await confirmPayment(res?.data?.paymentIntent, { paymentMethodType: 'Card' })
                 console.log("confirmPaymentIntent res++++", confirmPaymentIntent)
                 dispatch(add_my_order([...myOrders, myOrderDetails]))
-                await axios.post("https://insomniapillsuk.co/wp-json/v1/orders/create", {
-                    myOrderDetails,
-                })
+                await axios.post("https://insomniapillsuk.com/wp-json/v1/orders/create", myOrderDetails)
                     .then(console.log)
                     .catch(console.log)
                 setTimeout(() => {
@@ -108,9 +128,7 @@ const CreditCardScreen = props => {
         } catch (error) {
             console.log("Error rasied during payment intent", error)
             dispatch(add_my_order([...myOrders, myOrderDetails]))
-            await axios.post("https://insomniapillsuk.co/wp-json/v1/orders/create", {
-                myOrderDetails,
-            })
+            await axios.post("https://insomniapillsuk.com/wp-json/v1/orders/create", myOrderDetails)
                 .then(console.log)
                 .catch(console.log)
             setTimeout(() => {
@@ -123,6 +141,11 @@ const CreditCardScreen = props => {
     return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{ fontSize: 24, marginBottom: 20 }}>Payment Screen</Text>
+            <View>
+                <Text>Name: {name}</Text>
+                <Text>Email: {email}</Text>
+                {/* Display other user details */}
+            </View>
             <CardField
                 postalCodeEnabled={false}
                 placeholders={{
